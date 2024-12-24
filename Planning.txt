@@ -1,0 +1,23 @@
+** Overall Workflow
+- Read MDF
+- Parse required relationships
+- Understand root node (almost certainly program)
+- Read in user input
+-- ID prefixes
+-- Provided values
+- If CDE has PVs, use those
+- If no PV, generate random?
+- How to track relationships (patient-sample-file) Pandas?
+
+
+## relationships
+Example File form has
+- case.case_record_id - Key
+- study.clinical_study_designation Key
+
+In MDF there are:
+of_study - Src: file, Dst: study
+of_participant - Src: file, Dst: participant
+from_sample - Src: file, Dst: sample
+
+So, for any given node, the relationsihps are where the given node is Src, to the key of the destination
