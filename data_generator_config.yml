@@ -1,9 +1,11 @@
 "mdffiles":
-  - 'C:\Users\pihltd\Documents\modeltest\CRDC_Submission_20241125_MDF.yml'
-  - 'C:\Users\pihltd\Documents\modeltest\CRDC_Submission_20241125_MDF_Props.yml'
-"handle": handlename
+  - "https://raw.githubusercontent.com/CBIIT/cds-model/refs/heads/5.0.3/model-desc/cds-model.yml"
+  - "https://raw.githubusercontent.com/CBIIT/cds-model/refs/heads/5.0.3/model-desc/cds-model-props.yml"
+"handle": "CDS"
 "IDFILE": idfile name
-"outputpath": 'C:\Users\pihltd\Documents\modeltest\data\'
-"outputname": "RandomTest"
-"providedvaluesfile": filepathhere
+"nodefile": 'C:\Users\hangd\OneDrive\Documents\modeltest\data\Data_CDS503_Template.yml'
+#"outputpath": 'C:\Users\pihltd\Documents\modeltest\data\'
+"outputpath": 'C:\Users\hangd\OneDrive\Documents\modeltest\data\'
+"outputname": 'CDS503_Template.yml'
+"providedvaluesfile": "filepathhere"
 "sheetname": "Sheet1"

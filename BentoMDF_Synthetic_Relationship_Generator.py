@@ -14,8 +14,8 @@ def findHeadNode(edges):
         srclist.append(edjeobj.src.handle)
         dstlist.append(edjeobj.dst.handle)
     #Remove any duplicates
-    srclist = set(srclist)
-    dstlist = set(dstlist)
+    srclist = list(set(srclist))
+    dstlist = list(set(dstlist))
     
     for src in srclist:
         if src in dstlist:
@@ -57,56 +57,50 @@ def main(args):
     #Need a root node and it should be program
     finaldict['HeadNode'] = [{"name": rootnode, "count": 1, "Prefix": configs['handle']}]
     nodelist = list(nodes.keys())
+    #print(nodelist)
     temp = {}
     proptemp = {}
     
     # Populate the IncludeNodes and IncludeProperties sections
+    # TODO:  Need to handle rootnode so that properties are included in proplist
     for node in nodelist:
-        if node != 'program':
+        if node != rootnode:
             temp[node] = {"NodeCount":"", "Prefix":""}
-            nodeprops = nodes[node].props
-            proplist = list(nodeprops.keys())
-            proptemp[node] = proplist
+        #temp[node] = {"NodeCount":"", "Prefix":""}
+        nodeprops = nodes[node].props
+        proplist = []
+        #Yank out anything that's Template:No
+        #NOTE: THIS ALSO REMOVES REQUIRED ID COLUMNS
+        # Need to keep Template:No, Key:true fields  I think.
+        for propkey, propobj in nodeprops.items():
+            if 'Template' in propobj.tags:
+                if (propobj.tags['Template'].get_attr_dict()['value'] != 'No'):
+                    proplist.append(propkey)
+            else:
+                proplist.append(propkey)
+        proptemp[node] = proplist
+
     finaldict['IncludeNodes'] = temp
-    finaldict['IncludeProperties'] = proplist
+    finaldict['IncludeProperties'] = proptemp
     
     # Add the relationships.  Note, this differs significantly from Bruce's representation
     
-    reltemp = {}
-    sourcelist = edge_df['source'].unique()
-    for source in sourcelist:
-        rowtemp = {}
-        source_df = edge_df.loc[edge_df['source'] == source]
-        for row in source_df.iterrows():
-            print(row)
-            rowtemp['target'] = row['target']
-            rowtemp['relationship'] = row['relationship']
-        reltemp[source] = rowtemp
-    finaldict['RelationshipSpecs'] = reltemp
+    #reltemp = {}
+    #sourcelist = edge_df['source'].unique()
+    #for source in sourcelist:
+    #    rowtemp = {}
+    #    source_df = edge_df.loc[edge_df['source'] == source]
+    #    for row in source_df.iterrows():
+    #        print(row)
+    #        rowtemp['target'] = row['target']
+    #        rowtemp['relationship'] = row['relationship']
+    #    reltemp[source] = rowtemp
+    #finaldict['RelationshipSpecs'] = reltemp
     
-    filename = configs['outputpath']+configs['datainputfilename']
+    filename = configs['outputpath']+configs['outputname']
     crdclib.writeYAML(filename, finaldict)
     
-    
-    
-
-    
-    #for info, edge in edges.items():
-    #    edge_df.loc[len(edge_df)] = {"handle": info[0], "source": info[1], "target": info[2], "relationship": edge.get_attr_dict()['multiplicity']}
-    #print(edge_df)
-    #targetlist = edge_df['target'].unique()
-    #print(targetlist)
-    
-    # Program, Project, and Study are required for CRDC, but may not be present. 
-    #for target in targetlist:
-    #    # There can only be one Program
-    #    if target == 'program':
-    #        final_df[len(final_df)] = {"name": "program", "required": 1, "needed": 1, "comments": "Can only be one program"}
-    #    elif target == "project":
-    #        final_df[len(final_df)] = {"name": "program", "required": 1, "comments": "There can be one or more programs per project"}
-    #    elif target == "study":
-    #        final_df[len(final_df)] = {"name": "program", "required": 1, "comments": "There can be one or more studies per project or program"}
-    
+       
 
 
 if __name__ == "__main__":

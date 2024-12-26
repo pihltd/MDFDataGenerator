@@ -1,5 +1,6 @@
 import bento_mdf
 import pandas as pd
+from collections import Counter
 
 def getKeyFields(node, mdf):
     keylist = []
@@ -28,7 +29,39 @@ def propTemplateCheck(prop, mdf):
         templatecheck = prop.tags['Template'].get_attr_dict()['value']
     return templatecheck
 
+def getRootKey(edges):
+    srclist = []
+    dstlist = []
+    for edgekey, edgeobj in edges.items():
+        srclist.append(edgeobj.src.handle)
+        dstlist.append(edgeobj.dst.handle)
+    #Remove duplicates
+    srclist = list(set(srclist))
+    dstlist = list(set(dstlist))
+    for srcname in srclist:
+        if srcname in dstlist:
+            dstlist.remove(srcname)
+    if len(dstlist) != 1:
+        return None
+    else:
+        return dstlist[0]
+'''
+def getRelations(searchkey, edges, relationships):
+    rellist = []
+    for edgekey in edges.keys():
+        if searchkey in edgekey:
+            rellist.append(edgekey)
 
+    relationships[searchkey] = rellist
+    return relationships
+'''
+
+def getDstNodes(searchnode, mdf, dstlist):
+   # dstlist = []
+    dstedges = mdf.model.edges_by_dst(mdf.model.nodes[searchnode])
+    for dstedge in dstedges:
+        dstlist.append(dstedge.src.handle)
+    return dstlist
 
 
 # Use CDS model as experiment
@@ -43,6 +76,47 @@ cds_edges = cds_mdf.model.edges
 nodelist = list(cds_nodes.keys())
 
 #edges: edgename, src name, dst name
+rootnode = getRootKey(cds_edges)
+
+dstlist = []
+dstlist = getDstNodes(rootnode, cds_mdf, dstlist)
+checklist = []
+while Counter(checklist) != Counter(dstlist):
+    for dstnode in dstlist:
+        if dstnode not in checklist:
+            checklist.append(dstnode)
+            dstlist = getDstNodes(dstnode, cds_mdf, dstlist)
+            #print(checklist)
+            print(f"DSTLIST: {dstlist}")
+            print(f"CHECKLIST: {checklist}")
+print(dstlist)
+
+
+'''
+step 1 get dst nodes for root
+step 2 for each dst node, get their dst nodes
+'''
+
+#From root node find all destinations
+#reltree = {}
+#reltree = getRelations(rootnode, cds_edges, reltree)
+#Get all the edges with rootnode as destination
+#[print(dstkey.triplet) for dstkey in cds_mdf.model.edges_by_dst(cds_mdf.model.nodes[rootnode])]
+#dstedges = cds_mdf.model.edges_by_dst(cds_mdf.model.nodes[rootnode])
+#print(dstedges.src.handle)
+#srclist = []
+#checkedlist = []
+#for dstedge in dstedges:
+#    srclist.append(dstedge.src.handle)
+
+#    print(dstedge.get_attr_dict())j
+    #print(dstedge.src.handle)
+    #print(dstedge.dst.handle)
+
+
+
+
+'''
 srclist = []
 dstlist = []
 for edgekey, edgeobj in cds_edges.items():
@@ -59,14 +133,16 @@ dstlist = set(dstlist)
 for srcname in list(srclist):
     if srcname in dstlist:
         dstlist.remove(srcname)
-        srclist.remove(srcname)
-print(f"dstlist only: {dstlist}\nsrclist only: {srclist}")
+        #srclist.remove(srcname)
+#print(f"dstlist only: {dstlist}\nsrclist only: {srclist}")
+rootnode = dstlist[0]
+
 
 
 #for edge in cds_edges:
 #    print(f"Source: {edge.src}\tDst: {edge.dst}")
 
-
+'''
     
 '''
 for node in cds_nodes:
