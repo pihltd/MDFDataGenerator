@@ -1,0 +1,4 @@
+"mdffiles":
+  - "https://raw.githubusercontent.com/CBIIT/cds-model/refs/heads/5.0.3/model-desc/cds-model.yml"
+  - "https://raw.githubusercontent.com/CBIIT/cds-model/refs/heads/5.0.3/model-desc/cds-model-props.yml"
+codemapfile:
